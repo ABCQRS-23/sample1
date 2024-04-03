@@ -7,9 +7,10 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="style.css">
     <title> Sign in & Sign up</title>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </head>
 <body>
- <div class="wrapper">
+<div class="wrapper">
     <nav class="nav">
        <div class="nav-button">
             <button class="btn white-btn" id="loginBtn" onclick="login()">Sign In</button>
@@ -26,15 +27,15 @@
                 <header>Login</header>
             </div>
             <div class="input-box">
-                <input required type="email" class="input-field" placeholder="Email">
+                <input required type="email" id="login-email" class="input-field" placeholder="Email">
                 <i class="bx bx-user"></i>
             </div>
             <div class="input-box">
-                <input required type="password" class="input-field" placeholder="Password">
+                <input required type="password" id="login-password" class="input-field" placeholder="Password">
                 <i class="bx bx-lock-alt"></i>
             </div>
             <div class="input-box">
-                <input required type="submit" class="submit" value="Sign In">
+                <input type="submit" class="submit" value="Sign In" onclick="validateLogin()">
             </div>
             <div class="two-col">
                 <div class="one">
@@ -53,24 +54,24 @@
             </div>
             <div class="two-forms">
                 <div class="input-box">
-                    <input required type="text" class="input-field" placeholder="Firstname">
+                    <input required type="text" id="register-firstname" class="input-field" placeholder="Firstname">
                     <i class="bx bx-user"></i>
                 </div>
                 <div class="input-box">
-                    <input required type="text" class="input-field" placeholder="Lastname">
+                    <input required type="text" id="register-lastname" class="input-field" placeholder="Lastname">
                     <i class="bx bx-user"></i>
                 </div>
             </div>
             <div class="input-box">
-                <input required type="email" class="input-field" placeholder="Email">
+                <input required type="email" id="register-email" class="input-field" placeholder="Email">
                 <i class="bx bx-envelope"></i>
             </div>
             <div class="input-box">
-                <input required type="password" class="input-field" placeholder="Password">
+                <input required type="password" id="register-password" class="input-field" placeholder="Password">
                 <i class="bx bx-lock-alt"></i>
             </div>
             <div class="input-box">
-                <input type="submit" class="submit" value="Register">
+                <input type="submit" class="submit" value="Register" onclick="validateRegister()">
             </div>
             <div class="two-col">
                 <div class="one">
@@ -123,6 +124,105 @@
         b.className += " white-btn";
         x.style.opacity = 0;
         y.style.opacity = 1;
+    }
+
+    function validateLogin() {
+        var email = document.getElementById("login-email").value.trim();
+        var password = document.getElementById("login-password").value.trim();
+
+        if (!email || !email.includes("@")) {
+            swal("Error!", "Please enter a valid email address.", "error");
+            return;
+        }
+
+        if (password.length < 6) {
+            swal("Error!", "Password must be at least 6 characters long.", "error");
+            return;
+        }
+
+       
+        var formData = {
+            email: email,
+            password: password
+        };
+
+        
+        fetch('https://qty.mbme.org:6004/sendForm', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            
+            swal("Success!", "Login successful.", "success");
+            console.log(data); 
+        })
+        .catch(error => {
+            
+            swal("Error!", "An error occurred. Please try again later.", "error");
+            console.error('Error:', error); 
+        });
+    }
+
+    function validateRegister() {
+        var firstname = document.getElementById("register-firstname").value.trim();
+        var lastname = document.getElementById("register-lastname").value.trim();
+        var email = document.getElementById("register-email").value.trim();
+        var password = document.getElementById("register-password").value.trim();
+
+        
+        if (!firstname) {
+            swal("Error!", "Please enter your first name.", "error");
+            return;
+        }
+
+        if (!lastname) {
+            swal("Error!", "Please enter your last name.", "error");
+            return;
+        }
+
+   
+        if (!email || !email.includes("@")) {
+            swal("Error!", "Please enter a valid email address.", "error");
+            return;
+        }
+
+        
+        if (password.length < 6) {
+            swal("Error!", "Password must be at least 6 characters long.", "error");
+            return;
+        }
+
+        
+        var formData = {
+            firstname: firstname,
+            lastname: lastname,
+            email: email,
+            password: password
+        };
+
+      
+        fetch('https://qty.mbme.org:6004/sendForm', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            
+            swal("Success!", "Registration successful.", "success");
+            console.log(data); 
+        })
+        .catch(error => {
+           
+            swal("Error!", "An error occurred. Please try again later.", "error");
+            console.error('Error:', error);
+        });
     }
 
 </script>
